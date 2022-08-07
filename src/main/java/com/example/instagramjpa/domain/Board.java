@@ -1,0 +1,43 @@
+package com.example.instagramjpa.domain;
+
+import lombok.*;
+
+import javax.persistence.*;
+import java.sql.Timestamp;
+
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Builder
+@Table(name ="Board")
+public class Board {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "userId", nullable = false)
+    private User user;
+
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "createdDate", nullable = false)
+    private Timestamp createdDate;
+
+    @Column(name = "updatedDate", nullable = false)
+    private Timestamp updatedDate;
+
+    @Column(name = "suspensionStatus", nullable = false, length = 45)
+    private String suspensionStatus;
+
+    @Column(name = "status", length = 45)
+    private String status;
+
+
+
+
+
+}
