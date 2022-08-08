@@ -1,37 +1,38 @@
 package com.example.instagramjpa.domain;
 
-import com.example.instagramjpa.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
-import java.security.Timestamp;
+import java.sql.Timestamp;
 
 
+@Builder
 @Entity
 @Getter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@DynamicInsert
 public class UserBlock {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blockedUserId", nullable = false)
     private User blockedUser;
 
-    @Column(name = "createdDate", nullable = false,columnDefinition = "timestamp")
+    @Column(name = "createdDate",columnDefinition = "timestamp")
     private Timestamp createdDate;
-    
 
 
 }

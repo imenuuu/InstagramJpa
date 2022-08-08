@@ -10,7 +10,7 @@ import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 
 @Entity
@@ -91,6 +91,14 @@ public class User {
                 birth(postUserReq.getBirth()).
                 userId(postUserReq.getUserId()).
                 build();
+    }
+
+    public interface UserPassword{
+        String getPassword();
+    }
+
+    public interface UserId{
+        Long getId();
     }
 
 }
