@@ -4,13 +4,14 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Builder
-@Table(name ="Board")
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +37,13 @@ public class Board {
     @Column(name = "status", length = 45)
     private String status;
 
+
+    public interface BoardId {
+        Long getId();
+    }
+
+    @OneToMany(mappedBy="board",fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<BoardImg> boardImgUrl=new HashSet<>();
 
 
 

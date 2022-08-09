@@ -13,7 +13,6 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name ="BoardImg")
 
 public class BoardImg {
     @Id
@@ -39,6 +38,9 @@ public class BoardImg {
     private Timestamp updatedDate;
 
 
+    public interface ImgUrl{
+        String getBoardImgUrl();
+    }
 
 
 }

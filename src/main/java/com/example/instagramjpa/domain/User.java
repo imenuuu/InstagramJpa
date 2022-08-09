@@ -25,6 +25,8 @@ public class User {
     @Column(name = "id", nullable = false)
     private Long id;
 
+
+
     @Column(name = "userId", nullable = false, length = 45)
     private String userId;
 
@@ -93,6 +95,10 @@ public class User {
                 build();
     }
 
+    public void updatePassword(String password) {
+        this.password=password;
+    }
+
     public interface UserPassword{
         String getPassword();
     }
@@ -100,5 +106,22 @@ public class User {
     public interface UserId{
         Long getId();
     }
+
+    public void updateImg(String profileImg){
+        this.profileImg = profileImg;
+    }
+
+    public void updateLoginDate(Timestamp logInDate){
+        this.logInDate=logInDate;
+    }
+
+    public void updateProfile(String name, String userId,  String webSite, String introduce) {
+        this.name = name;
+        this.userId = userId;
+        this.webSite = webSite;
+        this.introduce = introduce;
+    }
+
+
 
 }
