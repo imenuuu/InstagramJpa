@@ -17,4 +17,10 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findAllByUserId(Long userId);
 
     List<Board> findIdByUserId(Long userId);
+
+
+    @Query(value="select b from Board b " +
+            "join fetch User U on U.id=b.user.id" +
+            " where b.user.id in (select F.followUser.id from Following F where F.user.id=:id) order by b.createdDate desc")
+    List<Board> findAllByUserIdOrderByCreatedDateDesc(Long id);
 }

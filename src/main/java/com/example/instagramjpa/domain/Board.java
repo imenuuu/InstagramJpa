@@ -45,6 +45,15 @@ public class Board {
     @OneToMany(mappedBy="board",fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<BoardImg> boardImgUrl=new HashSet<>();
 
+    @OneToMany(mappedBy="board",fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<Comment> Comment=new HashSet<>();
+
+    @OneToMany(mappedBy="comment",fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<ReComment> ReComment=new HashSet<>();
+
+    @OneToMany(mappedBy="board",fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<BoardLike> BoardLike=new HashSet<>();
+
 
 
 

@@ -112,9 +112,10 @@ public class UserService {
         User user =userRepository.getOne(userId);
         return GetMyProfileRes.builder()
                 .userId(user.getId())
-                .userName(user.getName())
+                .userLogInId(user.getUserId())
                 .profileImgUrl(user.getProfileImg())
-                .name(user.getIntroduce())
+                .introduce(user.getIntroduce())
+                .name(user.getName())
                 .website(user.getWebSite())
                 .boardCnt(boardRepository.countByUserId(userId))
                 .followerCnt(followingRepository.countByUserId(userId))

@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Builder
@@ -38,6 +40,9 @@ public class Comment {
 
     @Column(name = "suspensionStatus", length = 45)
     private String suspensionStatus;
+
+    @OneToMany(mappedBy="comment",fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<ReComment> ReComment=new HashSet<>();
 
 
 

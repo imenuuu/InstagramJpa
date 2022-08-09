@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Builder
 public class GetMyProfileRes {
     private Long userId;
-    private String userName;
+    private String userLogInId;
     private String profileImgUrl;
     private String name;
     private String introduce;
