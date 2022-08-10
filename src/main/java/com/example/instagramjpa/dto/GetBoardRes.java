@@ -27,7 +27,7 @@ public class GetBoardRes {
     private Timestamp boardTime;
     private List<String> boardImg;
 
-    public static GetBoardRes from(Board board,Boolean b){
+    public static GetBoardRes toArray(Board board,Boolean b){
         return GetBoardRes.builder().
                 userId(board.getUser().getId())
                 .profileImgUrl(board.getUser().getProfileImg())

@@ -7,6 +7,7 @@ import com.example.instagramjpa.dto.GetBoardRes;
 import com.example.instagramjpa.repository.BoardLikeRepository;
 import com.example.instagramjpa.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,16 +19,17 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardLikeRepository boardLikeRepository;
 
-    public List<GetBoardRes> getMainBoard(Long userId) {
-        List<Board> followUserId=boardRepository.findAllByUserIdOrderByCreatedDateDesc(userId);
+    public List<GetBoardRes> getMainBoard(Long userId, Pageable pageable) {
+
+        List<Board> followUserId=boardRepository.findAllByUserIdAndStatusAndSuspensionStatusOrderByCreatedDateDescLimitWithPagination(userId,"TRUE","FALSE",pageable);
         List<GetBoardRes> getBoardResList=new ArrayList<>();
 
         for (Board B : followUserId){
             if(boardLikeRepository.existsByUserIdAndBoardId(userId,B.getId())){
-                getBoardResList.add(GetBoardRes.from(B,true));
+                getBoardResList.add(GetBoardRes.toArray(B,true));
             }
             else{
-                getBoardResList.add(GetBoardRes.from(B,false));
+                getBoardResList.add(GetBoardRes.toArray(B,false));
             }
         }
 
