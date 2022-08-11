@@ -44,6 +44,9 @@ public class Comment {
     @OneToMany(mappedBy="comment",fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<ReComment> ReComment=new HashSet<>();
 
+    @OneToMany(mappedBy="comment",fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<CommentLike> CommentLike=new HashSet<>();
+
 
 
 }

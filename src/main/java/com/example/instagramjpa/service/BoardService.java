@@ -21,7 +21,7 @@ public class BoardService {
 
     public List<GetBoardRes> getMainBoard(Long userId, Pageable pageable) {
 
-        List<Board> followUserId=boardRepository.findAllByUserIdAndStatusAndSuspensionStatusOrderByCreatedDateDescLimitWithPagination(userId,"TRUE","FALSE",pageable);
+        List<Board> followUserId=boardRepository.findAllByUserIdAndStatusAndSuspensionStatusOrderByCreatedDateDescWithPagination(userId,"TRUE","FALSE",pageable);
         List<GetBoardRes> getBoardResList=new ArrayList<>();
 
         for (Board B : followUserId){

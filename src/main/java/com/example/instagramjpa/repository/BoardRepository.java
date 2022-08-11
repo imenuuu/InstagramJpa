@@ -24,6 +24,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "join fetch User U on U.id=b.user.id " +
             "where b.user.id in (select F.followUser.id from Following F where F.user.id=:id ) " +
             "and b.status=:status and b.suspensionStatus=:suspension order by b.createdDate desc")
-    List<Board> findAllByUserIdAndStatusAndSuspensionStatusOrderByCreatedDateDescLimitWithPagination(Long id, String status, String suspension, Pageable pageable);
+    List<Board> findAllByUserIdAndStatusAndSuspensionStatusOrderByCreatedDateDescWithPagination(Long id, String status, String suspension, Pageable pageable);
 
+
+    Board findAllById(Long boardId);
 }
