@@ -1,6 +1,8 @@
 package com.example.instagramjpa.domain;
 
+import com.example.instagramjpa.dto.PostBoardReq;
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -12,6 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Builder
+@DynamicInsert
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,17 +28,19 @@ public class Board {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "createdDate", nullable = false)
+    @Column(name = "createdDate")
     private Timestamp createdDate;
 
-    @Column(name = "updatedDate", nullable = false)
+    @Column(name = "updatedDate")
     private Timestamp updatedDate;
 
-    @Column(name = "suspensionStatus", nullable = false, length = 45)
+    @Column(name = "suspensionStatus", length = 45)
     private String suspensionStatus;
 
     @Column(name = "status", length = 45)
     private String status;
+
+
 
 
     public interface BoardId {

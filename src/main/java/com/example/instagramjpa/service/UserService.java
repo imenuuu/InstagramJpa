@@ -25,7 +25,6 @@ public class UserService {
     private final JwtService jwtService;
     private final BoardRepository boardRepository;
     private final FollowingRepository followingRepository;
-    private final BoardImgRepository boardImgRepository;
     public PostUserRes postUser(PostUserReq postUserReq) throws BaseException {
             User user=User.createUser(postUserReq);
             Long id=userRepository.save(user).getId();
@@ -124,5 +123,9 @@ public class UserService {
                         GetMyProfileRes::from).collect(Collectors.toList()))
                 .build();
 
+    }
+
+    public boolean checkUserById(Long userId) {
+        return userRepository.existsById(userId);
     }
 }

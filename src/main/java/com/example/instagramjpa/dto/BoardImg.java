@@ -9,8 +9,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PatchPasswordReq {
-    private Long userId;
-    private String phoneNumber;
-    private String password;
+public class BoardImg {
+    private String boardImgUrl;
 }

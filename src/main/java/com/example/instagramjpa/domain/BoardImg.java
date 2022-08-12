@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -13,7 +14,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-
+@DynamicInsert
 public class BoardImg {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,10 +32,10 @@ public class BoardImg {
     @Column(name = "boardImgurl", nullable = false,columnDefinition = "TEXT")
     private String boardImgurl;
 
-    @Column(name = "createdDate", nullable = false)
+    @Column(name = "createdDate")
     private Timestamp createdDate;
 
-    @Column(name = "updatedDate", nullable = false)
+    @Column(name = "updatedDate")
     private Timestamp updatedDate;
 
 
