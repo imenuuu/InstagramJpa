@@ -139,4 +139,12 @@ public class UserService {
     public boolean checkUserById(Long userId) {
         return userRepository.existsById(userId);
     }
+
+    public PostUserRes reIssueToken(Long userId) {
+        String accessToken= jwtService.createJwt(userId);
+        String refreshToken = jwtService.createRefreshToken(userId);
+
+        redisService.saveToken(String.valueOf(userId),refreshToken,(1000L*60*60*24*365));
+        return new PostUserRes(userId,accessToken,refreshToken);
+    }
 }

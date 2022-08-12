@@ -4,13 +4,12 @@ import com.example.instagramjpa.config.BaseException;
 import com.example.instagramjpa.config.BaseResponse;
 import com.example.instagramjpa.config.BaseResponseStatus;
 import com.example.instagramjpa.dto.*;
+import com.example.instagramjpa.service.RedisService;
 import com.example.instagramjpa.service.UserService;
 import com.example.instagramjpa.utils.JwtService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Date;
 
 import static com.example.instagramjpa.config.BaseResponseStatus.*;
 import static com.example.instagramjpa.utils.ValidationRegex.isRegexId;
@@ -27,8 +26,12 @@ public class UserController {
     @Autowired
     private final JwtService jwtService;
 
-    public UserController(JwtService jwtService) {
+    @Autowired
+    private final RedisService redisService;
+
+    public UserController(JwtService jwtService, RedisService redisService) {
         this.jwtService = jwtService;
+        this.redisService = redisService;
     }
 
     @ResponseBody
@@ -198,5 +201,27 @@ public class UserController {
     @GetMapping("/my_profile/{userId}")
     public BaseResponse<GetMyProfileRes> getMyProfile(@PathVariable("userId") Long userId){
         return new BaseResponse<>(userService.getMyProfile(userId));
+    }
+
+    @ResponseBody
+    @PostMapping("/re_token")
+    public BaseResponse<PostUserRes> reIssueToken(@RequestBody PostReIssueReq postReIssueReq){
+        if(!userService.checkUserById(postReIssueReq.getUserId())){
+            return new BaseResponse<>(NOT_EXIST_USER);
+        }
+
+        String redisRT= redisService.getValues(String.valueOf(postReIssueReq.getUserId()));
+        if(redisRT==null){
+            return new BaseResponse<>(INVALID_REFRESH_TOKEN);
+
+        }
+        if(!redisRT.equals(postReIssueReq.getRefreshToken())){
+            return new BaseResponse<>(INVALID_USER_JWT);
+        }
+
+        PostUserRes postUserRes=userService.reIssueToken(postReIssueReq.getUserId());
+
+        return new BaseResponse<>(postUserRes);
+
     }
 }
