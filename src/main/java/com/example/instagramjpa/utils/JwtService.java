@@ -22,9 +22,27 @@ import static com.example.instagramjpa.config.BaseResponseStatus.INVALID_JWT;
 @Service
 public class JwtService {
 
+
     /*
-    JWT 생성
+    RefreshToken 생성
     @param userId
+    @return String 1년
+     */
+    public String createRefreshToken(Long userIdx) {
+        Date now=new Date();
+
+        return Jwts.builder()
+                .setHeaderParam("type","jwt")
+                .claim("userIdx",userIdx)
+                .setSubject("refreshToken")
+                .setIssuedAt(now)
+                .setExpiration(new Date((1000L*60*60*24*365)))
+                .signWith(SignatureAlgorithm.HS256,Secret.JWT_SECRET_KEY)
+                .compact();
+    }
+    /*
+    AccessToken 생성
+    @param userId 한달
     @return String
      */
     public String createJwt(Long userId){
@@ -33,7 +51,7 @@ public class JwtService {
                 .setHeaderParam("type","jwt")
                 .claim("userId",userId)
                 .setIssuedAt(now)
-                .setExpiration(new Date(System.currentTimeMillis()+1*(1000*60*60*24*365)))
+                .setExpiration(new Date((1000L*60*60*24*30)))
                 .signWith(SignatureAlgorithm.HS256, Secret.JWT_SECRET_KEY)
                 .compact();
     }

@@ -8,9 +8,11 @@ import com.example.instagramjpa.repository.*;
 import com.example.instagramjpa.utils.JwtService;
 import com.example.instagramjpa.utils.SHA256;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 import static com.example.instagramjpa.config.BaseResponseStatus.DATABASE_ERROR;
@@ -25,12 +27,16 @@ public class UserService {
     private final JwtService jwtService;
     private final BoardRepository boardRepository;
     private final FollowingRepository followingRepository;
+    private final RedisService redisService;
+
+
     public PostUserRes postUser(PostUserReq postUserReq) throws BaseException {
             User user=User.createUser(postUserReq);
             Long id=userRepository.save(user).getId();
-
             String jwt= jwtService.createJwt(id);
-            return new PostUserRes(id,jwt);
+            String refreshToken = jwtService.createRefreshToken(id);
+            redisService.saveToken(String.valueOf(id),refreshToken,(1000L*60*60*24*365));
+            return new PostUserRes(id,jwt,refreshToken);
     }
 
     public boolean checkUserId(String userId) {
@@ -48,9 +54,14 @@ public class UserService {
             if (!encryptedPassword.equals(UserPassword.getPassword())) {
                 throw new BaseException(FAILED_TO_LOGIN);
             }
+
             User.UserId id = userRepository.findIdByUserId(postLoginReq.getUserId());
             String jwt = jwtService.createJwt(id.getId());
-            return new PostUserRes(id.getId(), jwt);
+            String refreshToken = jwtService.createRefreshToken(id.getId());
+
+            redisService.saveToken(String.valueOf(id.getId()),refreshToken,(1000L*60*60*24*365));
+
+            return new PostUserRes(id.getId(), jwt,refreshToken);
         }catch (Exception e){
             throw new BaseException(DATABASE_ERROR);
         }

@@ -10,6 +10,8 @@ import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+
 import static com.example.instagramjpa.config.BaseResponseStatus.*;
 import static com.example.instagramjpa.utils.ValidationRegex.isRegexId;
 import static com.example.instagramjpa.utils.ValidationRegex.isRegexPhoneNumber;
@@ -110,8 +112,6 @@ public class UserController {
 
     }
     )
-
-
     public BaseResponse<String> blockUser(@PathVariable("userId") Long userId, @PathVariable("targetId") Long targetId){
         try{
             Long userIdByJwt = jwtService.getUserIdx();
@@ -136,6 +136,19 @@ public class UserController {
         }
     }
 
+    @ApiResponses({
+            @ApiResponse(code = 1000, message = "요청 성공.")
+            , @ApiResponse(code = 2001, message = "JWT를 입력해주세요")
+            , @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다")
+            , @ApiResponse(code = 2003, message = "권한이 없는 유저 접근입니다.")
+            , @ApiResponse(code = 2011, message = "존재하지 않는 유저입니다.")
+            , @ApiResponse(code = 2094, message = "이미 해당 유저를 차단 하고 있습니다.")
+            , @ApiResponse(code = 4000, message = "데이터베이스 연결에 실패 하였습니다.")
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-ACCESS-TOKEN",value = "JWT 토큰값",dataType = "String",paramType = "header")
+
+    })
     @ResponseBody
     @PatchMapping("/profile/img")
     @ApiOperation(value="프로필 이미지 변경",notes="프로필 이미지 API")
@@ -149,6 +162,7 @@ public class UserController {
     @PatchMapping("/profile")
     @ApiOperation(value="프로필 편집",notes="프로필 편집 API")
     public BaseResponse<String> modifyProfile(@RequestBody PatchProfileReq patchProfileReq){
+
         String result="프로필 편집 성공";
         if(userService.checkUserId(patchProfileReq.getUserLogInId())){
             return new BaseResponse<>(BaseResponseStatus.POST_USERS_EXISTS_ID);
