@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.util.Date;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,8 @@ public class UserService {
     private final BoardRepository boardRepository;
     private final FollowingRepository followingRepository;
     private final RedisService redisService;
+
+    private String blackListATPrefix;
 
 
     public PostUserRes postUser(PostUserReq postUserReq) throws BaseException {
@@ -141,10 +144,18 @@ public class UserService {
     }
 
     public PostUserRes reIssueToken(Long userId) {
+
         String accessToken= jwtService.createJwt(userId);
         String refreshToken = jwtService.createRefreshToken(userId);
 
         redisService.saveToken(String.valueOf(userId),refreshToken,(1000L*60*60*24*365));
         return new PostUserRes(userId,accessToken,refreshToken);
+    }
+
+    public void logOut(Long userId, String accessToken) {
+
+
+
+        redisService.deleteValues(String.valueOf(userId));
     }
 }

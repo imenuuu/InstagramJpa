@@ -87,7 +87,8 @@ public enum BaseResponseStatus {
     NOT_EXIST_FILTER(false,2092 ,"필터를 제대로 입력해 주세요 1,2,3번만 존재합니다" ),
     NOT_EXIST_REPORT(false,2093 , "존재 하지 않는 신고번호 입니다."),
     EXIST_BLOCK_USER(false,2094 ,"해당 유저를 이미 차단하였습니다" ),
-    INVALID_REFRESH_TOKEN(false,2005 ,"리프레쉬 토큰이 만료되었습니다. 다시 로그인 해주세요");
+    INVALID_REFRESH_TOKEN(false,2005 ,"리프레쉬 토큰이 만료되었습니다. 다시 로그인 해주세요"),
+    HIJACK_ACCESS_TOKEN(false,2006,"탈취된 토큰입니다. 이 토큰은 사용할 수 없습니다.");
 
 
 

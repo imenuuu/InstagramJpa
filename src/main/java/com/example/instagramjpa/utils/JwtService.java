@@ -3,11 +3,13 @@ package com.example.instagramjpa.utils;
 
 import com.example.instagramjpa.config.BaseException;
 import com.example.instagramjpa.config.secret.Secret;
+import com.example.instagramjpa.service.RedisService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -15,13 +17,17 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
-import static com.example.instagramjpa.config.BaseResponseStatus.EMPTY_JWT;
-import static com.example.instagramjpa.config.BaseResponseStatus.INVALID_JWT;
+import static com.example.instagramjpa.config.BaseResponseStatus.*;
 
 @RequiredArgsConstructor
 @Service
 public class JwtService {
 
+
+    @Autowired
+    private final RedisService redisService;
+
+    private String blackListATPrefix;
 
     /*
     RefreshToken 생성
@@ -36,7 +42,7 @@ public class JwtService {
                 .claim("userIdx",userIdx)
                 .setSubject("refreshToken")
                 .setIssuedAt(now)
-                .setExpiration(new Date((1000L*60*60*24*365)))
+                .setExpiration(new Date(System.currentTimeMillis()+ (1000 * 60 * 60 * 24 * 365)))
                 .signWith(SignatureAlgorithm.HS256,Secret.JWT_SECRET_KEY)
                 .compact();
     }
@@ -51,7 +57,7 @@ public class JwtService {
                 .setHeaderParam("type","jwt")
                 .claim("userId",userId)
                 .setIssuedAt(now)
-                .setExpiration(new Date((1000L*60*60*24*30)))
+                .setExpiration(new Date(System.currentTimeMillis()+ (1000 * 60 * 60 )))
                 .signWith(SignatureAlgorithm.HS256, Secret.JWT_SECRET_KEY)
                 .compact();
     }
@@ -73,7 +79,7 @@ public class JwtService {
     public Long getUserIdx() throws BaseException {
         //1. JWT 추출
         String accessToken = getJwt();
-        System.out.println(getJwt());
+
         if(accessToken == null || accessToken.length() == 0){
             throw new BaseException(EMPTY_JWT);
         }
@@ -88,9 +94,25 @@ public class JwtService {
             throw new BaseException(INVALID_JWT);
         }
 
+        String expiredAt= redisService.getValues(accessToken);
+        Long userId = claims.getBody().get("userId",Long.class);
+
+        if(expiredAt.equals(String.valueOf(userId))){
+            throw new BaseException(HIJACK_ACCESS_TOKEN);
+        }
         // 3. userId 추출
-        return claims.getBody().get("userId",Long.class);
+        return userId;
+    }
+
+    public Date getExpiredTime(String token){
+        return Jwts.parser().setSigningKey(Secret.JWT_SECRET_KEY).parseClaimsJws(token).getBody().getExpiration();
     }
 
 
+    public void logOut(Long userId, String accessToken) {
+        long expiredAccessTokenTime=getExpiredTime(accessToken).getTime() - new Date().getTime();
+        redisService.saveToken(accessToken,String.valueOf(userId),expiredAccessTokenTime);
+        redisService.deleteValues(String.valueOf(userId));
+
+    }
 }

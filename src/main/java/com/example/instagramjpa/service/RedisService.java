@@ -1,12 +1,14 @@
 package com.example.instagramjpa.service;
 
+import com.example.instagramjpa.utils.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
 import java.time.Duration;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -36,4 +38,6 @@ public class RedisService {
     public void saveToken(String userId, String refreshToken, long time){
         redisTemplate.opsForValue().set(userId,refreshToken,time, TimeUnit.MILLISECONDS);
     }
+
+
 }

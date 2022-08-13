@@ -224,4 +224,28 @@ public class UserController {
         return new BaseResponse<>(postUserRes);
 
     }
+
+
+    // 토큰이 유효하다는 가정 하
+    // 만약 토큰이 만료되었다면 재발급 요청
+    @ResponseBody
+    @GetMapping("/logOut/{userId}")
+    public BaseResponse<String> logOut(@PathVariable("userId") Long userId){
+        try {
+            Long userIdByJwt = jwtService.getUserIdx();
+            //userId와 접근한 유저가 같은지 확인
+            if (userId != userIdByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+
+            String accessToken = jwtService.getJwt();
+            jwtService.logOut(userId,accessToken);
+            String result="로그아웃 성공";
+            return new BaseResponse<>(result);
+
+        } catch (BaseException e) {
+            return new BaseResponse<>((e.getStatus()));
+        }
+
+    }
 }
