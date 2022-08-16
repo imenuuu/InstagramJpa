@@ -41,8 +41,8 @@ deploy:
     wait-until-deployed: true
 
   - provider: codedeploy
-    access_key_id: AKIARWBFNWPQXJH5K5PW # Travis repo settings에 설정된 값
-    secret_access_key: j9kysbuIBJR95sXh6cv6A5MR4T7jANaMvmwRHpS1 # Travis repo settings에 설정된 값
+    access_key_id: AKIARWBFNWPQXJH5K5PW
+    secret_access_key: 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
     bucket: imenu-build # S3 버킷
     key: InstagramJpa.zip # 빌드 파일을 압축해서 전달
     bundle_type: zip # 압축 확장자
@@ -50,5 +50,3 @@ deploy:
     deployment_group: imenu-group # 웹 콘솔에서 등록한 CodeDeploy 배포 그룹
     region: ap-northeast-2
     wait-until-deployed: true
-    on:
-      branch: master
