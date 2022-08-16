@@ -4,3 +4,17 @@ files:
   - source:  / # 전체 파일을 나타낸다.
     destination: /home/root/app/zip/ # source로 지정된 전체 파일이 받을 위치이다.
     overwrite: yes # 기존 파일들이 있으면 덮어 쓸지를 결정한다.
+
+
+permissions:
+  - object: /
+    pattern: "**"
+    owner: root
+    group: root
+
+# 2
+hooks:
+  ApplicationStart:
+    - location: deploy.sh
+      timeout: 60
+      runas: root
