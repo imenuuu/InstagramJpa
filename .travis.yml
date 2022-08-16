@@ -29,7 +29,7 @@ before_deploy:
   # 2
   - cp scripts/*.sh before-deploy/
   - cp appspec.yml before-deploy/
-  - cp target/*.jar before-deploy/
+  - cp build/libs/*.jar before-deploy/
   # 3
   - cd before-deploy && zip -r before-deploy * # before-deploy로 이동후 전체 압축
   - cd ../ && mkdir -p deploy # 상위 디렉토리로 이동후 deploy 디렉토리 생성

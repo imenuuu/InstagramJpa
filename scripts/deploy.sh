@@ -1,6 +1,6 @@
 #!/bin/bash
 
-REPOSITORY=/home/root/app/step2
+REPOSITORY=/var/www
 PROJECT_NAME=InstagramJpa
 
 echo "> Build 파일 복사"
