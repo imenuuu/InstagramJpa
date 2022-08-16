@@ -31,13 +31,13 @@ before_deploy:
 
 deploy:
   - provider: s3
-  access_key_id: AKIARWBFNWPQXJH5K5PW
-  secret_access_key: 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
-  bucket: imenu-build
-  region: ap-northeast-2
-  skip_cleanup: true
-  acl: private
-  local_dir: deploy
-  wait-until-deployed: true
+    access_key_id: AKIARWBFNWPQXJH5K5PW
+    secret_access_key: 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
+    bucket: imenu-build
+    region: ap-northeast-2
+    skip_cleanup: true
+    acl: private
+    local_dir: deploy
+    wait-until-deployed: true
 
 #Travis 적용
