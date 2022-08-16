@@ -39,6 +39,7 @@ deploy:
     acl: private
     local_dir: deploy
     wait-until-deployed: true
+
   - provider: codedeploy
     access_key_id: AKIARWBFNWPQXJH5K5PW # Travis repo settings에 설정된 값
     secret_access_key: j9kysbuIBJR95sXh6cv6A5MR4T7jANaMvmwRHpS1 # Travis repo settings에 설정된 값
