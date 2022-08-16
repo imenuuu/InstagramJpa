@@ -25,7 +25,10 @@ dependencies {
 
     compileOnly(group: 'io.jsonwebtoken', name: 'jjwt', version: '0.7.0')
     compileOnly('io.jsonwebtoken:jjwt:0.9.0')
-    compileOnly 'javax.xml.bind:jaxb-api:2.1'
+
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.2'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.2'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.2'
 
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // JPA
