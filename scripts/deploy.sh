@@ -40,3 +40,4 @@ nohup java -jar \
     -Dspring.profiles.active=real \
     # 3
     $JAR_NAME > $REPOSITORY/nohup.out 2>&1 &
+
