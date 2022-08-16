@@ -97,6 +97,9 @@ public class JwtService {
         String expiredAt= redisService.getValues(accessToken);
         Long userId = claims.getBody().get("userId",Long.class);
 
+        if(expiredAt==null){
+            return userId;
+        }
         if(expiredAt.equals(String.valueOf(userId))){
             throw new BaseException(HIJACK_ACCESS_TOKEN);
         }

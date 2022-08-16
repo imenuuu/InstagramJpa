@@ -12,8 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import static com.example.instagramjpa.config.BaseResponseStatus.*;
-import static com.example.instagramjpa.utils.ValidationRegex.isRegexId;
-import static com.example.instagramjpa.utils.ValidationRegex.isRegexPhoneNumber;
+import static com.example.instagramjpa.utils.ValidationRegex.*;
 
 @RestController
 @RequestMapping("/users")
@@ -61,6 +60,9 @@ public class UserController {
             if (!isRegexId(postUserReq.getUserId())) {
                 return new BaseResponse<>(POST_USERS_INVALID_ID);
             }
+            if(isRegexIdString(postUserReq.getUserId())){
+                return new BaseResponse<>(POST_USERS_INVALID_STRING);
+            }
             if(!isRegexPhoneNumber(postUserReq.getPhoneNumber())){
                 return new BaseResponse<>(POST_USERS_INVALID_PHONE);
             }
@@ -103,6 +105,7 @@ public class UserController {
             , @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다")
             , @ApiResponse(code = 2003, message = "권한이 없는 유저 접근입니다.")
             , @ApiResponse(code = 2011, message = "존재하지 않는 유저입니다.")
+            , @ApiResponse(code = 2006 ,message= "탈취된 토큰입니다. 이 토큰은 사용할 수 없습니다.")
             , @ApiResponse(code = 2094, message = "이미 해당 유저를 차단 하고 있습니다.")
             , @ApiResponse(code = 4000, message = "데이터베이스 연결에 실패 하였습니다.")
     })
@@ -145,6 +148,7 @@ public class UserController {
             , @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다")
             , @ApiResponse(code = 2003, message = "권한이 없는 유저 접근입니다.")
             , @ApiResponse(code = 2011, message = "존재하지 않는 유저입니다.")
+            , @ApiResponse(code = 2006 ,message= "탈취된 토큰입니다. 이 토큰은 사용할 수 없습니다.")
             , @ApiResponse(code = 2094, message = "이미 해당 유저를 차단 하고 있습니다.")
             , @ApiResponse(code = 4000, message = "데이터베이스 연결에 실패 하였습니다.")
     })
@@ -156,11 +160,38 @@ public class UserController {
     @PatchMapping("/profile/img")
     @ApiOperation(value="프로필 이미지 변경",notes="프로필 이미지 API")
     public BaseResponse<String> modifyProfileImage(@RequestBody PatchProfileImgReq patchProfileImgReq){
-        String result="이미지 변경 성공";
-        userService.modifyProfileImage(patchProfileImgReq);
-        return new BaseResponse<>(result);
+        try {
+            Long userIdByJwt = jwtService.getUserIdx();
+            System.out.println(userIdByJwt);
+            //userId와 접근한 유저가 같은지 확인
+            if (patchProfileImgReq.getUserId() != userIdByJwt) {
+                return new BaseResponse<>(INVALID_USER_JWT);
+            }
+            String result = "이미지 변경 성공";
+            userService.modifyProfileImage(patchProfileImgReq);
+            return new BaseResponse<>(result);
+        }catch (BaseException e) {
+            return new BaseResponse<>((e.getStatus()));
+        }
     }
 
+    @ApiResponses({
+            @ApiResponse(code = 1000, message = "요청 성공.")
+            , @ApiResponse(code = 2001, message = "JWT를 입력해주세요")
+            , @ApiResponse(code = 2002, message = "유효하지 않은 JWT입니다")
+            , @ApiResponse(code = 2003, message = "권한이 없는 유저 접근입니다.")
+            , @ApiResponse(code = 2006 ,message= "탈취된 토큰입니다. 이 토큰은 사용할 수 없습니다.")
+            , @ApiResponse(code = 2015, message = "아이디를 입력해주세요")
+            , @ApiResponse(code = 2011, message = "존재하지 않는 유저입니다.")
+            , @ApiResponse(code = 2040, message = "아이디를 20자 미만으로 입력해주세요")
+            , @ApiResponse(code = 2041, message = "아이디에 문자열 하나 이상 포함해 주세요")
+            , @ApiResponse(code = 2094, message = "이미 해당 유저를 차단 하고 있습니다.")
+            , @ApiResponse(code = 4000, message = "데이터베이스 연결에 실패 하였습니다.")
+    })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name="X-ACCESS-TOKEN",value = "JWT 토큰값",dataType = "String",paramType = "header")
+
+    })
     @ResponseBody
     @PatchMapping("/profile")
     @ApiOperation(value="프로필 편집",notes="프로필 편집 API")
@@ -175,6 +206,9 @@ public class UserController {
         }
         if(patchProfileReq.getUserLogInId().length()>=20){
             return new BaseResponse<>(LONG_USER_ID_CHARACTERS);
+        }
+        if(isRegexIdString(patchProfileReq.getUserLogInId())){
+            return new BaseResponse<>(POST_USERS_INVALID_STRING);
         }
         //아이디 정규표현
         if (!isRegexId(patchProfileReq.getUserLogInId())) {
@@ -199,12 +233,15 @@ public class UserController {
 
     @ResponseBody
     @GetMapping("/my_profile/{userId}")
+    @ApiOperation(value="내 프로필 조회",notes="내 프로필 조회 API")
     public BaseResponse<GetMyProfileRes> getMyProfile(@PathVariable("userId") Long userId){
         return new BaseResponse<>(userService.getMyProfile(userId));
     }
 
     @ResponseBody
     @PostMapping("/re_token")
+    @ApiOperation(value="액세스 토큰 만료시 재발급",notes="액세스 토큰 만료시 재발급 API")
+
     public BaseResponse<PostUserRes> reIssueToken(@RequestBody PostReIssueReq postReIssueReq){
         if(!userService.checkUserById(postReIssueReq.getUserId())){
             return new BaseResponse<>(NOT_EXIST_USER);
@@ -228,6 +265,7 @@ public class UserController {
 
     // 토큰이 유효하다는 가정 하
     // 만약 토큰이 만료되었다면 재발급 요청
+    @ApiOperation(value="로그아웃",notes="로그아웃 API")
     @ResponseBody
     @GetMapping("/logOut/{userId}")
     public BaseResponse<String> logOut(@PathVariable("userId") Long userId){
