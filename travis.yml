@@ -14,8 +14,7 @@ cache:
 script: "./gradlew clean build"
 
 # CI 실행 완료 시 메일로 알람
-# 왜 안되는거야
 notifications:
   email:
     recipients:
-      - hyunwoo892579@gmail.com
+      - gusdn8926@naver.com
