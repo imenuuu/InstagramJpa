@@ -39,3 +39,5 @@ deploy:
   acl: private
   local_dir: deploy
   wait-until-deployed: true
+
+#Travis 적용
