@@ -15,9 +15,11 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Base64;
 import java.util.Date;
 
 import static com.example.instagramjpa.config.BaseResponseStatus.*;
+import static com.example.instagramjpa.config.secret.Secret.JWT_SECRET_KEY;
 
 @RequiredArgsConstructor
 @Service
@@ -42,8 +44,8 @@ public class JwtService {
                 .claim("userIdx",userIdx)
                 .setSubject("refreshToken")
                 .setIssuedAt(now)
-                .setExpiration(new Date(System.currentTimeMillis()+ (1000 * 60 * 60 * 24 * 365)))
-                .signWith(SignatureAlgorithm.HS256,Secret.JWT_SECRET_KEY)
+                .setExpiration(new Date(System.currentTimeMillis()+ (1000L * 60 * 60 * 24 * 365)))
+                .signWith(SignatureAlgorithm.HS256,Base64.getEncoder().encodeToString(JWT_SECRET_KEY.getBytes()))
                 .compact();
     }
     /*
@@ -58,7 +60,7 @@ public class JwtService {
                 .claim("userId",userId)
                 .setIssuedAt(now)
                 .setExpiration(new Date(System.currentTimeMillis()+ (1000 * 60 * 60 )))
-                .signWith(SignatureAlgorithm.HS256, Secret.JWT_SECRET_KEY)
+                .signWith(SignatureAlgorithm.HS256,Base64.getEncoder().encodeToString(JWT_SECRET_KEY.getBytes()))
                 .compact();
     }
 
@@ -88,7 +90,7 @@ public class JwtService {
         Jws<Claims> claims;
         try{
             claims = Jwts.parser()
-                    .setSigningKey(Secret.JWT_SECRET_KEY)
+                    .setSigningKey(Base64.getEncoder().encodeToString(JWT_SECRET_KEY.getBytes()))
                     .parseClaimsJws(accessToken);
         } catch (Exception ignored) {
             throw new BaseException(INVALID_JWT);
@@ -108,7 +110,7 @@ public class JwtService {
     }
 
     public Date getExpiredTime(String token){
-        return Jwts.parser().setSigningKey(Secret.JWT_SECRET_KEY).parseClaimsJws(token).getBody().getExpiration();
+        return Jwts.parser().setSigningKey(Base64.getEncoder().encodeToString(JWT_SECRET_KEY.getBytes())).parseClaimsJws(token).getBody().getExpiration();
     }
 
 
