@@ -37,6 +37,7 @@ public class RedisService {
 
     public void saveToken(String userId, String refreshToken, long time){
         redisTemplate.opsForValue().set(userId,refreshToken,time, TimeUnit.MILLISECONDS);
+        System.out.println("토큰저장");
     }
 
 

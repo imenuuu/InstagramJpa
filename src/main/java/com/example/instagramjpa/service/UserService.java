@@ -59,12 +59,13 @@ public class UserService {
             }
 
             User.UserId id = userRepository.findIdByUserId(postLoginReq.getUserId());
-            String jwt = jwtService.createJwt(id.getId());
-            String refreshToken = jwtService.createRefreshToken(id.getId());
+            Long userId = id.getId();
+            String jwt = jwtService.createJwt(userId);
+            String refreshToken = jwtService.createRefreshToken(userId);
 
-            redisService.saveToken(String.valueOf(id.getId()),refreshToken,(1000L*60*60*24*365));
+            redisService.saveToken(String.valueOf(userId),refreshToken,(1000L*60*60*24*365));
 
-            return new PostUserRes(id.getId(), jwt,refreshToken);
+            return new PostUserRes(userId, jwt,refreshToken);
         }catch (Exception e){
             throw new BaseException(DATABASE_ERROR);
         }
