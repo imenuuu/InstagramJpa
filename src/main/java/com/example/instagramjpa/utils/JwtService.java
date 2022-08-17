@@ -29,7 +29,6 @@ public class JwtService {
     @Autowired
     private final RedisService redisService;
 
-    private String blackListATPrefix;
 
     /*
     RefreshToken 생성
