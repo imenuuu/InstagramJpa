@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+.travis.yml
+appspec.yml
+
+/src/main/java/com/example/instagramjpa/config/secret/Secret.java
